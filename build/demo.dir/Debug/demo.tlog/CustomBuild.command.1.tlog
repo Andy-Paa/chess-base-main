@@ -1,0 +1,10 @@
+^C:\USERS\ANDY\DOWNLOADS\CHESS-BASE-MAIN\CHESS-BASE-MAIN\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Andy/Downloads/chess-base-main/chess-base-main -BC:/Users/Andy/Downloads/chess-base-main/chess-base-main/build --check-stamp-file C:/Users/Andy/Downloads/chess-base-main/chess-base-main/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

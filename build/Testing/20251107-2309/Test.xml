@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="Win32-MSBuild"
+	BuildStamp="20251107-2309-Experimental"
+	Name="LAPTOP-88NOE9UF"
+	Generator="ctest-4.1.0"
+	CompilerName="C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x86/cl.exe"
+	CompilerVersion="19.44.35215.0"
+	OSName="Windows"
+	Hostname="LAPTOP-88NOE9UF"
+	OSRelease=" Professional"
+	OSVersion=" (Build 26100)"
+	OSPlatform="AMD64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="10"
+	ModelName=""
+	ProcessorCacheSize="-1"
+	NumberOfLogicalCPU="22"
+	NumberOfPhysicalCPU="16"
+	TotalVirtualMemory="41424"
+	TotalPhysicalMemory="32173"
+	LogicalProcessorsPerPhysical="1"
+	ProcessorClockFrequency="2300"
+	>
+	<Testing>
+		<StartDateTime>Nov 07 15:10 Pacific Standard Time</StartDateTime>
+		<StartTestTime>1762557000</StartTestTime>
+		<TestList/>
+		<EndDateTime>Nov 07 15:10 Pacific Standard Time</EndDateTime>
+		<EndTestTime>1762557000</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>

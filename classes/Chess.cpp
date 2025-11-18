@@ -61,6 +61,67 @@ void Chess::FENtoBoard(const std::string& fen) {
     // 3: castling availability (KQkq or -)
     // 4: en passant target square (in algebraic notation, or -)
     // 5: halfmove clock (number of halfmoves since the last capture or pawn advance)
+    if (fen.empty()) throw std::invalid_argument("Empty FEN string");
+
+    // 清空棋盘
+    for (int yy = 0; yy < 8; ++yy)
+        for (int xx = 0; xx < 8; ++xx)
+            _grid->getSquare(xx, yy)->setBit(nullptr);
+
+    // 只取布局字段
+    const std::string placement = fen.substr(0, fen.find(' '));
+
+    int x = 0, y = 0;
+
+    auto put = [this, &x, &y](char c) {
+        if (x >= 8 || y >= 8)  // 二次保险
+            throw std::invalid_argument("Board index out of range");
+
+        struct Item { int player; ChessPiece piece; int tag; } it;
+        switch (c) {
+            case 'P': it = {0, ChessPiece::Pawn,   1}; break;
+            case 'N': it = {0, ChessPiece::Knight, 2}; break;
+            case 'B': it = {0, ChessPiece::Bishop, 3}; break;
+            case 'R': it = {0, ChessPiece::Rook,   4}; break;
+            case 'Q': it = {0, ChessPiece::Queen,  5}; break;
+            case 'K': it = {0, ChessPiece::King,   6}; break;
+            case 'p': it = {1, ChessPiece::Pawn,   1+128}; break;
+            case 'n': it = {1, ChessPiece::Knight, 2+128}; break;
+            case 'b': it = {1, ChessPiece::Bishop, 3+128}; break;
+            case 'r': it = {1, ChessPiece::Rook,   4+128}; break;
+            case 'q': it = {1, ChessPiece::Queen,  5+128}; break;
+            case 'k': it = {1, ChessPiece::King,   6+128}; break;
+            default:  throw std::invalid_argument("Invalid piece char in FEN");
+        }
+
+        Bit* bit = PieceForPlayer(it.player, it.piece);
+        ChessSquare* square = _grid->getSquare(x, y);
+        bit->setPosition(square->getPosition());
+        bit->setParent(square);
+        bit->setGameTag(it.tag);
+        square->setBit(bit);
+        ++x;
+    };
+
+    for (char c : placement) {
+        if (c == '/') {
+            if (x != 8) throw std::invalid_argument("FEN rank does not have 8 files");
+            x = 0;
+            ++y;
+            if (y >= 8) throw std::invalid_argument("Too many ranks in FEN");
+        } else if (c >= '1' && c <= '8') {
+            int n = c - '0';
+            if (x + n > 8) throw std::invalid_argument("Rank overflow in FEN");
+            x += n; // 空格跳过
+        } else {
+            if (x >= 8) throw std::invalid_argument("Too many files in rank");
+            put(c);
+        }
+    }
+
+    // 最终必须刚好填满 8x8
+    if (!(y == 7 && x == 8))
+        throw std::invalid_argument("FEN must describe exactly 8 ranks of 8 files");
 }
 
 bool Chess::actionForEmptyHolder(BitHolder &holder)
@@ -104,6 +165,7 @@ Player* Chess::ownerAt(int x, int y) const
 
 Player* Chess::checkForWinner()
 {
+    
     return nullptr;
 }
 
@@ -122,10 +184,10 @@ std::string Chess::stateString()
     std::string s;
     s.reserve(64);
     _grid->forEachSquare([&](ChessSquare* square, int x, int y) {
-            s += pieceNotation( x, y );
-        }
-    );
-    return s;}
+            s += pieceNotation(x, y);
+        });
+    return s;
+}
 
 void Chess::setStateString(const std::string &s)
 {

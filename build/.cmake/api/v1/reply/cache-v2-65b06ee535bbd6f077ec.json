@@ -43,7 +43,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x86/lib.exe"
+			"value" : "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx86/x64/lib.exe"
 		},
 		{
 			"name" : "CMAKE_CACHEFILE_DIR",
@@ -363,7 +363,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "/machine:X86"
+			"value" : "/machine:x64"
 		},
 		{
 			"name" : "CMAKE_EXE_LINKER_FLAGS_DEBUG",
@@ -499,7 +499,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "win32"
+			"value" : "x64"
 		},
 		{
 			"name" : "CMAKE_GENERATOR_TOOLSET",
@@ -511,7 +511,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "host=x64"
+			"value" : "host=x86"
 		},
 		{
 			"name" : "CMAKE_HOME_DIRECTORY",
@@ -535,7 +535,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/Program Files (x86)/tictactoe"
+			"value" : "C:/Program Files/tictactoe"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -551,7 +551,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x86/link.exe"
+			"value" : "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx86/x64/link.exe"
 		},
 		{
 			"name" : "CMAKE_LIST_FILE_NAME",
@@ -579,7 +579,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "/machine:X86"
+			"value" : "/machine:x64"
 		},
 		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS_DEBUG",
@@ -659,7 +659,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/mt.exe"
+			"value" : "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/mt.exe"
 		},
 		{
 			"name" : "CMAKE_NUMBER_OF_MAKEFILES",
@@ -819,7 +819,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/rc.exe"
+			"value" : "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x86/rc.exe"
 		},
 		{
 			"name" : "CMAKE_RC_COMPILER_WORKS",
@@ -939,7 +939,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "/machine:X86"
+			"value" : "/machine:x64"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS_DEBUG",
@@ -1051,7 +1051,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "/machine:X86"
+			"value" : "/machine:x64"
 		},
 		{
 			"name" : "CMAKE_STATIC_LINKER_FLAGS_DEBUG",

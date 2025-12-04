@@ -2,6 +2,7 @@
     "files.associations": {
         "*.dbclient-js": "javascript",
         "*.cpp": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "vector": "cpp"
     }
 }

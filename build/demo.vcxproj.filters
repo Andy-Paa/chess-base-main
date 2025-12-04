@@ -55,6 +55,9 @@
     <ClCompile Include="C:\Users\Andy\Downloads\chess-base-main\chess-base-main\classes\Chess.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Andy\Downloads\chess-base-main\chess-base-main\classes\GameState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\Andy\Downloads\chess-base-main\chess-base-main\imgui\imgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

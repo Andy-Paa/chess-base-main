@@ -2,19 +2,10 @@
 
 #include "Game.h"
 #include "Grid.h"
+#include "GameState.h"
 
 constexpr int pieceSize = 80;
 
-enum ChessPiece
-{
-    NoPiece,
-    Pawn,
-    Knight,
-    Bishop,
-    Rook,
-    Queen,
-    King
-};
 
 class Chess : public Game
 {
@@ -29,6 +20,8 @@ public:
     bool actionForEmptyHolder(BitHolder &holder) override;
 
     void stopGame() override;
+
+    void bitMovedFromTo(Bit &bit, BitHolder &src, BitHolder &dst) override;
 
     Player *checkForWinner() override;
     bool checkForDraw() override;
@@ -45,5 +38,12 @@ private:
     void FENtoBoard(const std::string& fen);
     char pieceNotation(int x, int y) const;
 
+    void clearBoardHighlights();
     Grid* _grid;
+    GameState _gameState;
+    std::vector<BitMove> _moves;
+
+    int _currentPlayer;
+    
+
 };

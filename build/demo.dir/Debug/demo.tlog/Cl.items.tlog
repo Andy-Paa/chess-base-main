@@ -16,6 +16,7 @@ C:\Users\Andy\Downloads\chess-base-main\chess-base-main\classes\Checkers.cpp;C:\
 C:\Users\Andy\Downloads\chess-base-main\chess-base-main\classes\Othello.cpp;C:\Users\Andy\Downloads\chess-base-main\chess-base-main\build\demo.dir\Debug\Othello.obj
 C:\Users\Andy\Downloads\chess-base-main\chess-base-main\classes\Connect4.cpp;C:\Users\Andy\Downloads\chess-base-main\chess-base-main\build\demo.dir\Debug\Connect4.obj
 C:\Users\Andy\Downloads\chess-base-main\chess-base-main\classes\Chess.cpp;C:\Users\Andy\Downloads\chess-base-main\chess-base-main\build\demo.dir\Debug\Chess.obj
+C:\Users\Andy\Downloads\chess-base-main\chess-base-main\classes\GameState.cpp;C:\Users\Andy\Downloads\chess-base-main\chess-base-main\build\demo.dir\Debug\GameState.obj
 C:\Users\Andy\Downloads\chess-base-main\chess-base-main\imgui\imgui_impl_dx11.cpp;C:\Users\Andy\Downloads\chess-base-main\chess-base-main\build\demo.dir\Debug\imgui_impl_dx11.obj
 C:\Users\Andy\Downloads\chess-base-main\chess-base-main\main_win32.cpp;C:\Users\Andy\Downloads\chess-base-main\chess-base-main\build\demo.dir\Debug\main_win32.obj
 C:\Users\Andy\Downloads\chess-base-main\chess-base-main\imgui\imgui_impl_win32.cpp;C:\Users\Andy\Downloads\chess-base-main\chess-base-main\build\demo.dir\Debug\imgui_impl_win32.obj

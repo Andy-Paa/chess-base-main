@@ -2,6 +2,7 @@
 #include <limits>
 #include <cmath>
 
+
 Chess::Chess()
 {
     _grid = new Grid(8, 8);
@@ -45,9 +46,23 @@ void Chess::setUpBoard()
     _gameOptions.rowX = 8;
     _gameOptions.rowY = 8;
 
+    _currentPlayer = 1;
     _grid->initializeChessSquares(pieceSize, "boardsquare.png");
     FENtoBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
 
+    _gameState.init(stateString().c_str(), WHITE);
+    _moves = _gameState.generateAllMoves();
+    std::cout << "[DEBUG] moves at start: " << _moves.size() << std::endl;
+    std::string s = stateString();
+    for (int i = 0; i < (int)_moves.size(); ++i) {
+    auto &m = _moves[i];
+    char pieceChar = s[m.from];
+    std::cout << "  move " << i
+              << " from=" << (int)m.from
+              << " to="   << (int)m.to
+              << " piece=" << pieceChar
+              << std::endl;
+    }
     startGame();
 }
 
@@ -71,7 +86,7 @@ void Chess::FENtoBoard(const std::string& fen) {
     // 只取布局字段
     const std::string placement = fen.substr(0, fen.find(' '));
 
-    int x = 0, y = 0;
+    int x = 0, y = 7;
 
     auto put = [this, &x, &y](char c) {
         if (x >= 8 || y >= 8)  // 二次保险
@@ -107,8 +122,8 @@ void Chess::FENtoBoard(const std::string& fen) {
         if (c == '/') {
             if (x != 8) throw std::invalid_argument("FEN rank does not have 8 files");
             x = 0;
-            ++y;
-            if (y >= 8) throw std::invalid_argument("Too many ranks in FEN");
+            --y;
+            if (y < 0) throw std::invalid_argument("Too many ranks in FEN");
         } else if (c >= '1' && c <= '8') {
             int n = c - '0';
             if (x + n > 8) throw std::invalid_argument("Rank overflow in FEN");
@@ -120,7 +135,7 @@ void Chess::FENtoBoard(const std::string& fen) {
     }
 
     // 最终必须刚好填满 8x8
-    if (!(y == 7 && x == 8))
+    if (!(y == 0 && x == 8))
         throw std::invalid_argument("FEN must describe exactly 8 ranks of 8 files");
 }
 
@@ -129,18 +144,57 @@ bool Chess::actionForEmptyHolder(BitHolder &holder)
     return false;
 }
 
-bool Chess::canBitMoveFrom(Bit &bit, BitHolder &src)
+bool Chess::canBitMoveFromTo(Bit &bit, BitHolder &src, BitHolder &dst)
 {
-    // need to implement friendly/unfriendly in bit so for now this hack
-    int currentPlayer = getCurrentPlayer()->playerNumber() * 128;
-    int pieceColor = bit.gameTag() & 128;
-    if (pieceColor == currentPlayer) return true;
+    ChessSquare* srcsquare = (ChessSquare *)&src;
+    ChessSquare* square = (ChessSquare *)&dst;
+    if (square) {
+        int squareIndex = square->getSquareIndex();
+        for(auto move : _moves) {
+            if (move.to == squareIndex && move.from == srcsquare->getSquareIndex()) {
+                return true;
+            }
+        }
+    }
     return false;
 }
 
-bool Chess::canBitMoveFromTo(Bit &bit, BitHolder &src, BitHolder &dst)
+void Chess::clearBoardHighlights() {
+    _grid->forEachSquare([](ChessSquare* square, int x, int y) {
+            square->setHighlighted(false);
+    });
+}
+
+void Chess::bitMovedFromTo(Bit &bit, BitHolder &src, BitHolder &dst) {
+    _currentPlayer = (_currentPlayer == WHITE ? BLACK : WHITE);
+    _gameState.init( stateString().c_str(), _currentPlayer);
+    _moves = _gameState.generateAllMoves();
+    clearBoardHighlights();
+    std::cout << "[DEBUG] moves after bit moved: " << _moves.size() << std::endl;
+    endTurn();
+}
+
+bool Chess::canBitMoveFrom(Bit &bit, BitHolder &src)
 {
-    return true;
+        std::cout << "canBitMoveFrom called, gameTag=" << bit.gameTag()
+              << " playerNumber=" << getCurrentPlayer()->playerNumber() << std::endl;
+    int currentPlayer = getCurrentPlayer()->playerNumber() * 128;
+    int pieceColor = bit.gameTag() & 128;
+    if (pieceColor != currentPlayer) return false;
+
+    bool ret = false;
+    ChessSquare* square = (ChessSquare *)&src;
+    if (square) {
+        int squareIndex = square->getSquareIndex();
+        for(auto move : _moves) {
+            if (move.from == squareIndex) {
+                ret = true;
+                auto dest = _grid->getSquareByIndex(move.to);
+                dest->setHighlighted(true);
+            }
+        }
+    }
+    return ret;
 }
 
 void Chess::stopGame()

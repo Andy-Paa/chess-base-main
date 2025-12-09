@@ -172,6 +172,10 @@ void Chess::bitMovedFromTo(Bit &bit, BitHolder &src, BitHolder &dst) {
     clearBoardHighlights();
     std::cout << "[DEBUG] moves after bit moved: " << _moves.size() << std::endl;
     endTurn();
+
+    if (_currentPlayer == BLACK) {
+        makeAIMove(4);
+    }
 }
 
 bool Chess::canBitMoveFrom(Bit &bit, BitHolder &src)
@@ -254,4 +258,166 @@ void Chess::setStateString(const std::string &s)
             square->setBit(nullptr);
         }
     });
+}
+
+static int pieceValue(char c) {
+    switch (c) {
+        case 'P': case 'p': return 100;
+        case 'N': case 'n': return 320;
+        case 'B': case 'b': return 330;
+        case 'R': case 'r': return 500;
+        case 'Q': case 'q': return 900;
+        case 'K': case 'k': return 10000;
+        default: return 0;
+    }
+}
+
+int Chess::evaluateBoard(const GameState& gamestate) const
+{
+    int value = 0;
+    for (int i = 0; i < 64; ++i) {
+        char c = gamestate.state[i];
+        switch (c) {
+            // 白子加分
+            case 'P': case 'N': case 'B': case 'R': case 'Q': case 'K':
+                value += pieceValue(c);
+                break;
+            // 黑子减分
+            case 'p': case 'n': case 'b': case 'r': case 'q': case 'k':
+                value -= pieceValue(c);
+                break;
+            default:
+                break;
+        }
+    }
+    return value * gamestate.color;
+}
+
+int Chess::negamax(GameState& gamestate, int depth, int alpha, int beta)
+{
+    std::vector<BitMove> moves = gamestate.generateAllMoves();
+
+    if (depth == 0 || _moves.empty()) {
+        return evaluateBoard(gamestate);
+    }
+
+    int best = std::numeric_limits<int>::min();
+
+    for (const BitMove& mv : _moves) {
+        gamestate.pushMove(mv);
+
+        int score = -negamax(gamestate, depth - 1, -beta, -alpha);
+
+        gamestate.popState();
+
+        if (score > best) best = score;
+        if (score > alpha) alpha = score;
+        if (alpha >= beta) {
+            break;
+        }
+    }
+
+    return best;
+}
+
+BitMove Chess::findBestMove(int depth)
+{
+    std::vector<BitMove> moves = _gameState.generateAllMoves();
+    if (moves.empty()) {
+        return BitMove();
+    }
+
+    int alpha = std::numeric_limits<int>::min() + 1;
+    int beta  = std::numeric_limits<int>::max();
+    int bestScore = std::numeric_limits<int>::min();
+
+    BitMove bestMove = moves[0];
+
+    for (const BitMove& mv : moves) {
+        _gameState.pushMove(mv);
+        int score = -negamax(_gameState, depth - 1, -beta, -alpha);
+        _gameState.popState();
+
+        if (score > bestScore) {
+            bestScore = score;
+            bestMove = mv;
+        }
+        if (score > alpha) {
+            alpha = score;
+        }
+    }
+
+    std::cout << "Eval Result: " << bestScore << std::endl;
+    return bestMove;
+}
+
+void Chess::printBoard(const GameState& gamestate) const
+{
+    std::cout << "  +-----------------+\n";
+    for (int rank = 7; rank >= 0; --rank) {
+        std::cout << (rank + 1) << " | ";
+        for (int file = 0; file < 8; ++file) {
+            int idx = rank * 8 + file;
+            char c = gamestate.state[idx];
+            if (c == '0') c = '.';
+            std::cout << c << ' ';
+        }
+        std::cout << "|\n";
+    }
+    std::cout << "  +-----------------+\n";
+    std::cout << "    a b c d e f g h\n";
+}
+
+void Chess::makeAIMove(int depth)
+{
+    if (_currentPlayer != BLACK) return;
+
+    BitMove best = findBestMove(depth);
+
+    _gameState.pushMove(best);
+
+    std::cout << "AI move: from " << (int)best.from
+              << " to " << (int)best.to << std::endl;
+    printBoard(_gameState);
+
+    std::string fenPlacement = gameStateToFEN(_gameState);
+    FENtoBoard(fenPlacement);
+
+    _currentPlayer = _gameState.color;
+
+    _moves = _gameState.generateAllMoves();
+    clearBoardHighlights();
+    std::cout << "[DEBUG] moves after AI move: " << _moves.size() << std::endl;
+
+    endTurn();
+}
+
+std::string Chess::gameStateToFEN(const GameState& gamestate) const
+{
+    std::string fen;
+    fen.reserve(64 + 7);
+
+    for (int rank = 7; rank >= 0; --rank) {
+        int empty = 0;
+        for (int file = 0; file < 8; ++file) {
+            int idx = rank * 8 + file;
+            char c = gamestate.state[idx];
+
+            if (c == '0') {
+                ++empty;
+            } else {
+                if (empty > 0) {
+                    fen.push_back('0' + empty);
+                    empty = 0;
+                }
+                fen.push_back(c); // 直接用 'PNBRQKpnbrqk'
+            }
+        }
+        if (empty > 0) {
+            fen.push_back('0' + empty);
+        }
+        if (rank > 0) fen.push_back('/');
+    }
+
+    return fen;
 }

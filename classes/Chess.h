@@ -1,5 +1,6 @@
 #pragma once
-
+#include <vector>
+#include <string>
 #include "Game.h"
 #include "Grid.h"
 #include "GameState.h"
@@ -32,6 +33,8 @@ public:
 
     Grid* getGrid() override { return _grid; }
 
+    void makeAIMove(int depth = 4);
+
 private:
     Bit* PieceForPlayer(const int playerNumber, ChessPiece piece);
     Player* ownerAt(int x, int y) const;
@@ -43,7 +46,15 @@ private:
     GameState _gameState;
     std::vector<BitMove> _moves;
 
+    int evaluateBoard(const GameState& gamestate) const;
+    int negamax(GameState& gamestate, int depth, int alpha, int beta);
+
+    BitMove findBestMove(int depth);
+
+    void printBoard(const GameState& gamestate) const;
+    std::string gameStateToFEN(const GameState& gamestate) const;
+
     int _currentPlayer;
-    
+
 
 };

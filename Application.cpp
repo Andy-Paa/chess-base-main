@@ -6,6 +6,9 @@
 #include "classes/Connect4.h"
 #include "classes/Chess.h"
 
+#define TOURNAMENT_IMPLEMENTATION
+#include "classes/Tournament.h"
+
 namespace ClassGame {
         //
         // our global variables
@@ -13,6 +16,7 @@ namespace ClassGame {
         Game *game = nullptr;
         bool gameOver = false;
         int gameWinner = -1;
+        TournamentClient *client = nullptr;
 
         //
         // game starting point
@@ -65,6 +69,8 @@ namespace ClassGame {
                     if (ImGui::Button("Start Chess")) {
                         game = new Chess();
                         game->setUpBoard();
+                        //client = new TournamentClient((Chess *)game, "abcde");       // THIS SHOULD BE YOUR BOT NAME
+                        //client->connect("13.223.80.180", 5000);
                     }
                 } else {
                     ImGui::Text("Current Player Number: %d", game->getCurrentPlayer()->playerNumber());
@@ -76,11 +82,17 @@ namespace ClassGame {
                         ImGui::Text("%s", stateString.substr(y*stride,stride).c_str());
                     }
                     ImGui::Text("Current Board State: %s", game->stateString().c_str());
+
+                    if (ImGui::Button("End Turn")) {
+                        game->endTurn();
+                    }
                 }
                 ImGui::End();
 
                 ImGui::Begin("GameWindow");
-                if (game) {
+                if (client) {
+                    client->update();
+                } else if (game) {
                     if (game->gameHasAI() && (game->getCurrentPlayer()->isAIPlayer() || game->_gameOptions.AIvsAI))
                     {
                         game->updateAI();

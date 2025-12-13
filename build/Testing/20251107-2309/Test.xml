@@ -25,11 +25,11 @@
 	ProcessorClockFrequency="2300"
 	>
 	<Testing>
-		<StartDateTime>Dec 08 17:22 ̫ƽ[NON-UTF-8-BYTE-0xD1][NON-UTF-8-BYTE-0xF3][NON-UTF-8-BYTE-0xB1][NON-UTF-8-BYTE-0xEA]׼ʱ[NON-UTF-8-BYTE-0xBC][NON-UTF-8-BYTE-0xE4]</StartDateTime>
-		<StartTestTime>1765243362</StartTestTime>
+		<StartDateTime>Dec 13 12:55 ̫ƽ[NON-UTF-8-BYTE-0xD1][NON-UTF-8-BYTE-0xF3][NON-UTF-8-BYTE-0xB1][NON-UTF-8-BYTE-0xEA]׼ʱ[NON-UTF-8-BYTE-0xBC][NON-UTF-8-BYTE-0xE4]</StartDateTime>
+		<StartTestTime>1765659312</StartTestTime>
 		<TestList/>
-		<EndDateTime>Dec 08 17:22 ̫ƽ[NON-UTF-8-BYTE-0xD1][NON-UTF-8-BYTE-0xF3][NON-UTF-8-BYTE-0xB1][NON-UTF-8-BYTE-0xEA]׼ʱ[NON-UTF-8-BYTE-0xBC][NON-UTF-8-BYTE-0xE4]</EndDateTime>
-		<EndTestTime>1765243362</EndTestTime>
+		<EndDateTime>Dec 13 12:55 ̫ƽ[NON-UTF-8-BYTE-0xD1][NON-UTF-8-BYTE-0xF3][NON-UTF-8-BYTE-0xB1][NON-UTF-8-BYTE-0xEA]׼ʱ[NON-UTF-8-BYTE-0xBC][NON-UTF-8-BYTE-0xE4]</EndDateTime>
+		<EndTestTime>1765659312</EndTestTime>
 		<ElapsedMinutes>0</ElapsedMinutes>
 	</Testing>
 </Site>

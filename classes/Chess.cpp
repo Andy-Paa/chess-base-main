@@ -1,6 +1,7 @@
 #include "Chess.h"
 #include <limits>
 #include <cmath>
+#include <sstream>   
 
 
 Chess::Chess()
@@ -297,13 +298,13 @@ int Chess::negamax(GameState& gamestate, int depth, int alpha, int beta)
 {
     std::vector<BitMove> moves = gamestate.generateAllMoves();
 
-    if (depth == 0 || _moves.empty()) {
+    if (depth == 0 || moves.empty()) {
         return evaluateBoard(gamestate);
     }
 
     int best = std::numeric_limits<int>::min();
 
-    for (const BitMove& mv : _moves) {
+    for (const BitMove& mv : moves) {
         gamestate.pushMove(mv);
 
         int score = -negamax(gamestate, depth - 1, -beta, -alpha);
@@ -418,6 +419,133 @@ std::string Chess::gameStateToFEN(const GameState& gamestate) const
         }
         if (rank > 0) fen.push_back('/');
     }
+
+    return fen;
+}
+
+void Chess::updateAI()
+{
+    // 比赛模式下，TournamentClient 每次都会先调用 setBoardFromFEN，
+    // 所以这里直接用 _gameState 来搜索就行。
+
+    _lastAIMove = BitMove();  // 重置，确保没有旧数据
+
+    // 防御一下：没有合法走法就不要再算了
+    std::vector<BitMove> moves = _gameState.generateAllMoves();
+    if (moves.empty()) {
+        std::cout << "[AI] No legal moves in current position\n";
+        return;
+    }
+
+    // 用你已经写好的 negamax 搜索
+    int searchDepth = 4; // 可调
+    BitMove best = findBestMove(searchDepth);
+
+    _lastAIMove = best;  // 保存给 TournamentClient 用
+
+    std::cout << "[AI] Computed move (tournament): from "
+              << (int)best.from << " to " << (int)best.to << std::endl;
+}
+
+// Tournament support: Set board from FEN and reinitialize game state for AI
+void Chess::setBoardFromFEN(const std::string& fen) {
+    _grid->forEachSquare([](ChessSquare* square, int x, int y) {
+        square->destroyBit();
+    });
+    // 允许传完整 FEN，也允许只传棋子布局部分
+    std::string piecePlacement = fen;
+    std::string activeColor = "w";
+    std::string castling = "-";
+    std::string enPassant = "-";
+
+    // 如果是完整 FEN（包含空格）
+    size_t spacePos = fen.find(' ');
+    if (spacePos != std::string::npos) {
+        std::istringstream fenStream(fen);
+        fenStream >> piecePlacement >> activeColor >> castling >> enPassant;
+    }
+
+    // 1) 用布局部分更新 UI 棋盘
+    FENtoBoard(piecePlacement);
+
+    // 2) 从 FEN 判断轮到谁走
+    _currentPlayer = (activeColor == "w" || activeColor == "W") ? WHITE : BLACK;
+
+    // 3) 用当前 UI 盘面字符串初始化 GameState（注意是 _gameState，不是 _gamestate）
+    _gameState.init(stateString().c_str(), _currentPlayer);
+
+    // 4) 重新生成合法走法给 negamax 用
+    _moves = _gameState.generateAllMoves();
+
+    std::cout << "[Tournament] Board set from FEN. Player: "
+              << (_currentPlayer == WHITE ? "White" : "Black")
+              << ", Legal moves: " << _moves.size() << std::endl;
+}
+
+// Tournament support: Generate FEN string from current board
+std::string Chess::getFEN() const {
+    std::string fen;
+    fen.reserve(90);
+
+    // 1) Piece placement (rank 8 -> rank 1)
+    for (int rank = 7; rank >= 0; --rank) {
+        int emptyCount = 0;
+        for (int file = 0; file < 8; ++file) {
+            char piece = pieceNotation(file, rank);
+            if (piece == '0') {
+                emptyCount++;
+            } else {
+                if (emptyCount > 0) {
+                    fen += std::to_string(emptyCount);
+                    emptyCount = 0;
+                }
+                fen += piece;
+            }
+        }
+        if (emptyCount > 0) {
+            fen += std::to_string(emptyCount);
+        }
+        if (rank > 0) {
+            fen += '/';
+        }
+    }
+
+    // 2) Active color
+    fen += ' ';
+    fen += (_currentPlayer == WHITE) ? 'w' : 'b';
+
+    // 3) Castling availability（简化版，根据王和车的位置判断）
+    fen += ' ';
+    std::string castling;
+
+    // 白方
+    char e1 = pieceNotation(4, 0);
+    char a1 = pieceNotation(0, 0);
+    char h1 = pieceNotation(7, 0);
+    if (e1 == 'K') {
+        if (h1 == 'R') castling += 'K';
+        if (a1 == 'R') castling += 'Q';
+    }
+
+    // 黑方
+    char e8 = pieceNotation(4, 7);
+    char a8 = pieceNotation(0, 7);
+    char h8 = pieceNotation(7, 7);
+    if (e8 == 'k') {
+        if (h8 == 'r') castling += 'k';
+        if (a8 == 'r') castling += 'q';
+    }
+
+    fen += castling.empty() ? "-" : castling;
+
+    // 4) En passant（简化：不处理，写 '-'）
+    fen += " -";
+
+    // 5) Halfmove clock（简化）
+    fen += " 0";
+
+    // 6) Fullmove number（简化）
+    fen += " 1";
 
     return fen;
 }

@@ -35,6 +35,20 @@ public:
 
     void makeAIMove(int depth = 4);
 
+    // Tournament support methods
+    void setBoardFromFEN(const std::string& fen); // 从 FEN 设置棋盘（包含轮到谁走）
+    BitMove getLastAIMove() const { return _lastAIMove; }
+    std::string getFEN() const;
+
+    // 给 TournamentClient 用的：返回当前走棋方（WHITE=1, BLACK=-1）
+    int getCurrentPlayerColor() const { return _currentPlayer; }
+
+    // 这个变量可以放 private，不过老师示例放 public 也行
+    BitMove _lastAIMove;  // 存 AI 算出的最后一步，用于发给服务器
+
+    // 覆盖 Game 里的虚函数（如果已经有声明就不用重复）
+    virtual void updateAI() override;
+
 private:
     Bit* PieceForPlayer(const int playerNumber, ChessPiece piece);
     Player* ownerAt(int x, int y) const;
